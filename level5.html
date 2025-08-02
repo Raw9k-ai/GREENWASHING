@@ -1,0 +1,219 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Irrelevance Trick</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Arial Rounded MT Bold', sans-serif;
+      overflow: hidden;
+    }body {
+  background: url('scene0.jpg') no-repeat center center;
+  background-size: cover;
+  transition: background 0.5s ease;
+}
+
+#game-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.menu-btn {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.3rem 0.9rem;
+  border-radius: 1rem;
+  font-size: 0.6rem;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.bubble {
+  background-color: #ffffff;
+  color: #333;
+  padding: 0.5rem;
+  border-radius: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 0.7rem;
+  max-width: 80%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.option-container {
+  position: absolute;
+  bottom: 0.5rem;
+  display: flex;
+  gap: 6rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.option-container button {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #222;
+  border: 2px solid #ddd;
+  border-radius: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: background 0.3s ease;
+  cursor: pointer;
+}
+
+.option-container button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+#fade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+  z-index: 9999;
+}
+
+@media screen and (orientation: portrait) {
+  body::before {
+    content: "\1F501 Please rotate your device to landscape.";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    z-index: 99999;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  #game-container {
+    display: none;
+  }
+}
+
+  </style>
+</head><body>
+  <div id="fade"></div>
+  <div id="game-container">
+    <button class="menu-btn" onclick="window.location.href='index1.html'">☰</button><div class="bubble" id="bubble-text"></div>
+
+<div class="option-container" id="options"></div>
+
+  </div>  <script>
+    let scene = 0;
+
+    const scenes = [
+      {
+        text: "Wow! This bottled water says it’s gluten-free! Should we buy it?",
+        bg: "scene0.jpg",
+        options: [
+          { label: "Wait... water never had gluten.", next: 1 },
+          { label: "Sounds healthier!", wrong: "Not really. Water is always gluten-free. This is classic misdirection!" }
+        ]
+      },
+      {
+        text: "Brands often slap labels on products—even when they’re meaningless for that product type.",
+        bg: "scene1.jpg",
+        options: [
+          { label: "So this is the Irrelevance Trick!", next: 2 },
+          { label: "But isn’t more info better?", wrong: "Not if it's irrelevant. It just distracts from the real issues." }
+        ]
+      },
+      {
+        text: "Companies know greenwashing sells. They hope you won’t notice the trick.",
+        bg: "scene2.jpg",
+        options: [
+          { label: "Next time, I’ll read labels carefully!", next: 3 },
+          { label: "At least it looks eco-friendly...", wrong: "Don’t be fooled by looks. Always think critically." }
+        ]
+      },
+      {
+        text: "Nice work! The Irrelevance Trick tries to distract you with eco-nonsense. Stay sharp!",
+        bg: "scene3.jpg",
+        options: []
+      }
+    ];
+
+    function loadScene() {
+      const bubble = document.getElementById('bubble-text');
+      const optionsContainer = document.getElementById('options');
+      const data = scenes[scene];
+
+      document.body.style.backgroundImage = `url('${data.bg}')`;
+      bubble.innerText = data.text;
+
+      optionsContainer.innerHTML = '';
+
+      if (data.options.length === 0) {
+        optionsContainer.style.display = 'none';
+        return;
+      }
+
+      optionsContainer.style.display = 'flex';
+
+      data.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.innerText = opt.label;
+        btn.onclick = () => {
+          if (opt.wrong) {
+            showTempMessage(opt.wrong);
+          } else if (opt.next !== undefined) {
+            fadeToScene(opt.next);
+          }
+        };
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function showTempMessage(msg) {
+      const bubble = document.getElementById('bubble-text');
+      const options = document.getElementById('options');
+      const originalText = scenes[scene].text;
+
+      bubble.innerText = msg;
+      options.style.display = 'none';
+
+      setTimeout(() => {
+        bubble.innerText = originalText;
+        options.style.display = 'flex';
+      }, 2000);
+    }
+
+    function fadeToScene(nextScene) {
+      const fade = document.getElementById('fade');
+      fade.style.opacity = 1;
+
+      setTimeout(() => {
+        scene = nextScene;
+        loadScene();
+        fade.style.opacity = 0;
+      }, 500);
+    }
+
+    // Load the first scene
+    loadScene();
+  </script></body>
+</html>

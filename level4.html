@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fake Label Trick</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Arial Rounded MT Bold', sans-serif;
+      overflow: hidden;
+    }#game-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  transition: background 0.5s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+.bubble {
+  background-color: #ffffff;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 0.75rem;
+  max-width: 80%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.option-container {
+  position: absolute;
+  bottom: 0.5rem;
+  display: flex;
+  gap: 5rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.option-container button {
+  background-color: rgba(255, 255, 255, 0.7);
+  color: #222;
+  border: 2px solid #ddd;
+  border-radius: 1.5rem;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.option-container button:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+#back-btn {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.6rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+@media screen and (orientation: portrait) {
+  body::before {
+    content: "🔁 Please rotate your device to landscape.";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    z-index: 9999;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  #game-container {
+    display: none;
+  }
+}
+
+#blink-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9998;
+  transition: opacity 0.15s ease-in-out;
+}
+
+  </style>
+</head>
+<body>
+  <button id="back-btn" onclick="window.location.href='index1.html'">☰</button>
+  <div id="blink-overlay"></div>  <div id="game-container">
+    <div class="bubble" id="bubble-text"></div>
+    <div class="option-container" id="option-buttons"></div>
+  </div>  <script>
+    const scenes = [
+      {
+        text: "You pick up a cleaning spray bottle that proudly displays a ‘Green Approved’ leaf badge.",
+        options: [
+          { label: "Wait, is that a real certification?", correct: true },
+          { label: "Looks trustworthy!", correct: false }
+        ],
+        response: {
+          correct: "Good catch! There’s no known eco-label named ‘Green Approved.’ Time to investigate further.",
+          wrong: "Not quite. That label might just be decoration. Always check!"
+        },
+        bg: "url('https://example.com/scene1.jpg')"
+      },
+      {
+        text: "You discover real certifications like USDA Organic, Rainforest Alliance, and Energy Star—but this logo isn’t on any trusted list.",
+        options: [
+          { label: "So they made it up?", correct: true },
+          { label: "Maybe it’s a new one?", correct: false }
+        ],
+        response: {
+          correct: "Exactly. Some companies design fake logos to look official.",
+          wrong: "It could be—but unless it’s verified, assume it’s fake."
+        },
+        bg: "url('https://example.com/scene3.jpg')"
+      },
+      {
+        text: "Be label-smart. Always verify eco-claims through real, recognized certifications.",
+        options: null,
+        bg: "url('https://example.com/scene5.jpg')"
+      }
+    ];
+
+    let sceneIndex = 0;
+
+    function blinkTransition(callback) {
+      const overlay = document.getElementById('blink-overlay');
+      overlay.style.opacity = '1';
+      setTimeout(() => {
+        callback();
+        overlay.style.opacity = '0';
+      }, 200);
+    }
+
+    function renderScene(index) {
+      const scene = scenes[index];
+      document.getElementById('game-container').style.backgroundImage = scene.bg;
+      document.getElementById('bubble-text').innerText = scene.text;
+
+      const optionContainer = document.getElementById('option-buttons');
+      optionContainer.innerHTML = '';
+
+      if (scene.options) {
+        optionContainer.style.display = 'flex';
+        scene.options.forEach(option => {
+          const btn = document.createElement('button');
+          btn.innerText = option.label;
+          btn.onclick = () => handleOption(option.correct);
+          optionContainer.appendChild(btn);
+        });
+      } else {
+        optionContainer.style.display = 'none';
+      }
+    }
+
+    function handleOption(isCorrect) {
+      const feedback = isCorrect ? scenes[sceneIndex].response.correct : scenes[sceneIndex].response.wrong;
+      document.getElementById('bubble-text').innerText = feedback;
+      document.getElementById('option-buttons').style.display = 'none';
+
+      setTimeout(() => {
+        sceneIndex++;
+        if (sceneIndex < scenes.length) {
+          blinkTransition(() => renderScene(sceneIndex));
+        }
+      }, 1800);
+    }
+
+    window.onload = () => {
+      renderScene(sceneIndex);
+    };
+  </script></body>
+</html>

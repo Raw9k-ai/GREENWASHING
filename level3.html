@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Vague Buzzword Trick</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Arial Rounded MT Bold', sans-serif;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+    }
+
+    #blink-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100%;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .bubble {
+      background-color: #ffffff;
+      color: #333;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 0.7rem;
+      max-width: 80%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .option-container {
+      position: absolute;
+      bottom: 0.5rem;
+      display: flex;
+      gap: 6rem;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .option-container button {
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #222;
+      border: 2px solid #ddd;
+      border-radius: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.7rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .option-container button:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    #menu-button {
+      position: absolute;
+      top: 0.8rem;
+      left: 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      font-size: 0.7rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    @media screen and (orientation: portrait) {
+      body::before {
+        content: "🔁 Please rotate your device to landscape.";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        z-index: 9998;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      #game-container {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="blink-overlay"></div>
+
+  <button id="menu-button" onclick="location.href='index1.html'">☰</button>
+
+  <div id="game-container">
+    <div class="bubble" id="bubble-text"></div>
+    <div class="option-container" id="option-buttons"></div>
+  </div>
+
+  <script>
+    const scenes = [
+      {
+        text: "This shampoo is labeled ‘eco-conscious’ and ‘natural’ — but no ingredient list, no certifications.",
+        options: [
+          { label: "That’s suspicious.", correct: true },
+          { label: "Sounds eco enough.", correct: false }
+        ],
+        bg: "bg1.jpg"
+      },
+      {
+        text: "Correct! Words like ‘natural’ are often used to appear green without evidence.",
+        options: [
+          { label: "Check ingredients.", correct: true },
+          { label: "Marketing is marketing.", correct: false }
+        ],
+        bg: "bg2.jpg"
+      },
+      {
+        text: "Smart move. Real sustainability means verified claims, not pretty buzzwords.",
+        options: [
+          { label: "What are legit terms?", correct: true },
+          { label: "Whatever, I’ll trust them.", correct: false }
+        ],
+        bg: "bg3.jpg"
+      },
+      {
+        text: "Try looking for certifications like USDA Organic, EPEAT, or GOTS. Trust, but verify.",
+        options: null,
+        bg: "bg4.jpg"
+      }
+    ];
+
+    let currentScene = 0;
+
+    function renderScene(index) {
+      const scene = scenes[index];
+      document.getElementById("bubble-text").innerText = scene.text;
+      document.body.style.backgroundImage = `url('${scene.bg}')`;
+
+      const container = document.getElementById("option-buttons");
+      container.innerHTML = "";
+
+      if (!scene.options) {
+        container.style.display = "none";
+        return;
+      }
+
+      container.style.display = "flex";
+      scene.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt.label;
+        btn.onclick = () => handleChoice(opt.correct);
+        container.appendChild(btn);
+      });
+    }
+
+    function blinkTransition(callback) {
+      const overlay = document.getElementById("blink-overlay");
+      overlay.style.opacity = "1";
+      setTimeout(() => {
+        callback();
+        overlay.style.opacity = "0";
+      }, 250);
+    }
+
+    function handleChoice(isCorrect) {
+      const bubble = document.getElementById("bubble-text");
+      const feedback = isCorrect
+        ? "✅ Correct!"
+        : "❌ Nope. That’s how greenwashing tricks people.";
+
+      bubble.innerText = feedback;
+
+      setTimeout(() => {
+        if (isCorrect) {
+          currentScene++;
+          if (currentScene < scenes.length) {
+            blinkTransition(() => renderScene(currentScene));
+          }
+        }
+      }, 1200);
+    }
+
+    // Start
+    renderScene(currentScene);
+  </script>
+</body>
+</html>

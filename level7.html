@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fibbing Trick</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: linear-gradient(to right, #fef9f3, #ffffff);
+      font-family: 'Arial Rounded MT Bold', sans-serif;
+      overflow: hidden;
+    }
+
+    #menu-icon {
+      position: fixed;
+      top: 0.6rem;
+      left: 0.6rem;
+      font-size: 1.2rem;
+      background-color: rgba(0,0,0,0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.4rem;
+      cursor: pointer;
+      z-index: 999;
+      transition: background 0.2s ease;
+    }
+
+    #menu-icon:hover {
+      background-color: rgba(0,0,0,0.1);
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100%;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .bubble {
+      background-color: #ffffff;
+      color: #333;
+      padding: 0.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 0.7rem;
+      max-width: 80%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .option-container {
+      position: absolute;
+      bottom: 0.5rem;
+      display: flex;
+      gap: 6rem;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .option-container button {
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #222;
+      border: 2px solid #ddd;
+      border-radius: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.7rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .option-container button:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    @media screen and (orientation: portrait) {
+      body::before {
+        content: "🔁 Please rotate your device to landscape.";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        z-index: 9999;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      #game-container {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Menu button on top-left -->
+  <div id="menu-icon" onclick="window.location.href='index1.html'">☰</div>
+
+  <div id="game-container">
+    <div class="bubble" id="bubble-text">
+      Our clothes are 100% organic and biodegradable.
+    </div>
+    <div class="option-container" id="options">
+      <button onclick="handleOption('doubt')">Where’s the proof?</button>
+      <button onclick="handleOption('believe')">Wow, that’s amazing!</button>
+    </div>
+  </div>
+
+  <script>
+    let scene = 0;
+
+    const scenes = [
+      {
+        text: "Our clothes are 100% organic and biodegradable.",
+        options: [
+          { label: "Where’s the proof?", next: 1 },
+          { label: "Wow, that’s amazing!", wrong: "Don’t fall for claims without evidence. That’s how fibbing works." }
+        ]
+      },
+      {
+        text: "Hmm... no certifications, no proof. Just claims.",
+        options: [
+          { label: "So they might be lying?", next: 2 },
+          { label: "Maybe they forgot to show it.", wrong: "If it’s real, they’d flaunt it. Silence is suspicious." }
+        ]
+      },
+      {
+        text: "That’s called fibbing — lying to appear eco-friendly.",
+        options: [
+          { label: "Like fake awards or fake eco-labels?", next: 3 },
+          { label: "I thought they cared about the planet.", wrong: "Marketing cares about sales. Truth is optional." }
+        ]
+      },
+      {
+        text: "Some brands fake labels or invent fake eco-awards.",
+        options: [
+          { label: "Only trust third-party certified claims.", next: 4 },
+          { label: "So we can’t trust anything?", wrong: "We *can* trust — but only with evidence, not vibes." }
+        ]
+      },
+      {
+        text: "A real green claim needs third-party certification, not just pretty packaging.",
+        options: [
+          { label: "That’s how we catch greenwashing lies.", next: 5 },
+          { label: "Maybe packaging is enough?", wrong: "Looks don’t mean legitimacy. Show us proof." }
+        ]
+      },
+      {
+        text: "Always ask: *Where’s the proof?*",
+        options: []
+      }
+    ];
+
+    function handleOption(choice) {
+      const currentScene = scenes[scene];
+      const bubble = document.getElementById('bubble-text');
+      const optionsContainer = document.getElementById('options');
+
+      const selected = currentScene.options.find(opt => opt.label === event.target.innerText);
+
+      if (selected?.wrong) {
+        bubble.innerText = selected.wrong;
+        optionsContainer.style.display = 'none';
+        setTimeout(() => {
+          optionsContainer.style.display = 'flex';
+          bubble.innerText = currentScene.text;
+        }, 2000);
+      } else if (selected?.next !== undefined) {
+        scene = selected.next;
+        loadScene();
+      }
+    }
+
+    function loadScene() {
+      const bubble = document.getElementById('bubble-text');
+      const optionsContainer = document.getElementById('options');
+
+      bubble.innerText = scenes[scene].text;
+
+      if (!scenes[scene].options.length) {
+        optionsContainer.style.display = 'none';
+        return;
+      }
+
+      optionsContainer.innerHTML = '';
+      scenes[scene].options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.innerText = opt.label;
+        btn.onclick = () => handleOption(opt.label);
+        optionsContainer.appendChild(btn);
+      });
+    }
+  </script>
+</body>
+</html>

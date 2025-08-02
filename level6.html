@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hidden Trade-Off Trick</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Arial Rounded MT Bold', sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      background: url('scene0.jpg') no-repeat center center;
+      background-size: cover;
+      transition: background 0.5s ease;
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      height: 100%;
+      padding: 1rem;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .menu-btn {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background-color: rgba(255, 255, 255, 0.6);
+      padding: 0.3rem 0.9rem;
+      border-radius: 1rem;
+      font-size: 0.6rem;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .bubble {
+      background-color: #ffffff;
+      color: #333;
+      padding: 0.5rem;
+      border-radius: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 0.7rem;
+      max-width: 80%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .option-container {
+      position: absolute;
+      bottom: 0.5rem;
+      display: flex;
+      gap: 6rem;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .option-container button {
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #222;
+      border: 2px solid #ddd;
+      border-radius: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.7rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .option-container button:hover {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    #fade {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s;
+      z-index: 9999;
+    }
+
+    @media screen and (orientation: portrait) {
+      body::before {
+        content: "🔁 Please rotate your device to landscape.";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        z-index: 99999;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      #game-container {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="fade"></div>
+  <div id="game-container">
+    <button class="menu-btn" onclick="window.location.href='index1.html'">Menu</button>
+    <div class="bubble" id="bubble-text"></div>
+    <div class="option-container" id="options"></div>
+  </div>
+
+  <script>
+    let scene = 0;
+
+    const scenes = [
+      {
+        text: "You're in a store. A shampoo bottle claims 'Made with Organic Aloe'.",
+        bg: "scene0.jpg",
+        options: [
+          { label: "Grab it—it must be eco!", wrong: "This is a Hidden Trade-Off Trick. One good ingredient doesn't cancel toxic ones." },
+          { label: "Check the rest of the ingredients.", next: 1 }
+        ]
+      },
+      {
+        text: "You notice sulfates and parabens in the ingredients. Clearly not eco.",
+        bg: "scene1.jpg",
+        options: [
+          { label: "So, it's just marketing fluff.", next: 2 },
+          { label: "Maybe a little aloe is enough?", wrong: "Nope. One green label doesn't make it eco-friendly." }
+        ]
+      },
+      {
+        text: "Hidden Trade-Off is about showing one 'good' thing to hide the bad.",
+        bg: "scene2.jpg",
+        options: [
+          { label: "I'll research products next time.", next: 3 },
+          { label: "But I like that aloe label!", wrong: "Don’t fall for it—real sustainability means the *whole* product matters." }
+        ]
+      },
+      {
+        text: "Great job! Don’t let a single buzzword distract you from the full picture.",
+        bg: "scene3.jpg",
+        options: []
+      }
+    ];
+
+    function loadScene() {
+      const bubble = document.getElementById('bubble-text');
+      const optionsContainer = document.getElementById('options');
+      const data = scenes[scene];
+
+      document.body.style.backgroundImage = `url('${data.bg}')`;
+      bubble.innerText = data.text;
+
+      optionsContainer.innerHTML = '';
+
+      if (!data.options || data.options.length === 0) {
+        optionsContainer.style.display = 'none';
+        return;
+      }
+
+      optionsContainer.style.display = 'flex';
+
+      data.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.innerText = opt.label;
+        btn.onclick = () => {
+          if (opt.wrong) {
+            showTempMessage(opt.wrong);
+          } else if (opt.next !== undefined) {
+            fadeToScene(opt.next);
+          }
+        };
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function showTempMessage(msg) {
+      const bubble = document.getElementById('bubble-text');
+      const options = document.getElementById('options');
+      const originalText = scenes[scene].text;
+
+      bubble.innerText = msg;
+      options.style.display = 'none';
+
+      setTimeout(() => {
+        bubble.innerText = originalText;
+        options.style.display = 'flex';
+      }, 2000);
+    }
+
+    function fadeToScene(nextScene) {
+      const fade = document.getElementById('fade');
+      fade.style.opacity = 1;
+
+      setTimeout(() => {
+        scene = nextScene;
+        loadScene();
+        fade.style.opacity = 0;
+      }, 500);
+    }
+
+    loadScene();
+  </script>
+</body>
+</html>
