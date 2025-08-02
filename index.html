@@ -194,67 +194,7 @@
     }
   </script>
 </body>
-</html>      background-color: rgba(255, 255, 255, 0.95);
-    }
-
-    @media screen and (orientation: portrait) {
-      body::before {
-        content: "🔁 Please rotate your device to landscape.";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: black;
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        z-index: 9999;
-        text-align: center;
-        padding: 1rem;
-      }
-
-      #game-container,
-      #start-screen {
-        display: none !important;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Start Screen -->
-  <div id="start-screen">
-    <button id="start-button" onclick="enterGame()">Start Game</button>
-  </div>
-
-  <!-- Game Container -->
-  <div id="game-container">
-    <div class="bubble" id="bubble-text">Which greenwashing sin would you like to explore?</div>
-    <div class="option-container" id="levels-container">
-      <button onclick="openLevel('level1.html')">1. Hidden Trade-Off</button>
-      <button onclick="openLevel('level2.html')">2. No Proof</button>
-      <button onclick="openLevel('level3.html')">3. Vague Buzzword</button>
-      <button onclick="openLevel('level4.html')">4. Fake Label</button>
-      <button onclick="openLevel('level5.html')">5. Irrelevant Claim</button>
-      <button onclick="openLevel('level6.html')">6. Lesser of Two Evils</button>
-      <button onclick="openLevel('level7.html')">7. Fibbing</button>
-    </div>
-  </div>
-
-  <script>
-    function enterGame() {
-      // Try fullscreen if available
-      const docEl = document.documentElement;
-      if (docEl.requestFullscreen) {
-        docEl.requestFullscreen().catch(err => {
-          console.warn("Fullscreen denied:", err);
-        });
-      }
-
-      const startScreen = document.getElementById('start-screen');
+</html>      
       const gameContainer = document.getElementById('game-container');
       const bubble = document.getElementById('bubble-text');
       const levels = document.getElementById('levels-container');
