@@ -194,28 +194,4 @@
     }
   </script>
 </body>
-</html>      
-      const gameContainer = document.getElementById('game-container');
-      const bubble = document.getElementById('bubble-text');
-      const levels = document.getElementById('levels-container');
-
-      startScreen.classList.add('fade-out');
-
-      setTimeout(() => {
-        startScreen.style.display = 'none';
-        gameContainer.style.display = 'flex';
-        gameContainer.classList.add('fade-in');
-        bubble.style.display = 'block';
-        levels.style.display = 'flex';
-      }, 800);
-    }
-
-    function openLevel(filename) {
-      document.body.classList.add('fade-out');
-      setTimeout(() => {
-        window.location.href = filename;
-      }, 600);
-    }
-  </script>
-</body>
 </html>
