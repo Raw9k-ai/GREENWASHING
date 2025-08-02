@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <title>Hidden Trade-Off Trick</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      width: 100vw;
-      height: 100vh;
+      height: 100%;
       font-family: 'Arial Rounded MT Bold', sans-serif;
       overflow: hidden;
       transition: background-image 0.4s ease;
@@ -57,8 +57,7 @@
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      width: 100vw;
-      height: 100vh;
+      height: 100%;
       padding: 1rem;
       box-sizing: border-box;
       z-index: 1;
@@ -164,20 +163,20 @@
     ];
 
     function renderScene() {
-      tryFullscreen(); // Optional: force fullscreen
-
       const bubble = document.getElementById('bubble-text');
       const container = document.getElementById('option-container');
       const scene = scenes[sceneIndex];
 
+      // Blink effect
       const overlay = document.getElementById('blink-overlay');
       overlay.style.opacity = '1';
-
       setTimeout(() => {
+        // Set background
         document.body.style.backgroundImage = `url('${scene.bg}')`;
+
+        // Update text and options
         bubble.innerText = scene.text;
         container.innerHTML = "";
-
         scene.options.forEach((opt, index) => {
           const btn = document.createElement("button");
           btn.textContent = opt;
@@ -213,16 +212,10 @@
     }
 
     function goToMenu() {
-      window.location.href = "index.html";
+      window.location.href = "index.html"; // or your actual menu page
     }
 
-    function tryFullscreen() {
-      const el = document.documentElement;
-      if (el.requestFullscreen) {
-        el.requestFullscreen().catch(() => {});
-      }
-    }
-
+    // Init
     renderScene();
   </script>
 </body>
