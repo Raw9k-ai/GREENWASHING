@@ -8,13 +8,12 @@
     html, body {
       margin: 0;
       padding: 0;
-      width: 100vw;
-      height: 100vh;
+      height: 100%;
       font-family: 'Arial Rounded MT Bold', sans-serif;
-      background: url('https://github.com/Raw9k-ai/GREENWASHING/blob/c220d87e47068ad2b0171d76a0602c17581cde73/1754114114532.png') no-repeat center center;
+      overflow: hidden;
+      background: url('content://com.android.providers.media.documents/document/image%3A1000083670') no-repeat center center;
       background-size: cover;
       transition: opacity 0.6s ease;
-      overflow: hidden;
     }
 
     body.fade-out {
@@ -22,11 +21,6 @@
     }
 
     #game-container, #start-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
       opacity: 1;
       transition: opacity 0.8s ease;
     }
@@ -41,12 +35,14 @@
     }
 
     #game-container {
-      display: none;
+      display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
+      height: 100%;
       padding: 1rem;
       box-sizing: border-box;
+      display: none;
     }
 
     .bubble {
@@ -65,12 +61,13 @@
     .option-container {
       position: absolute;
       bottom: 1rem;
-      display: none;
+      display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
       justify-content: center;
       width: 100%;
       padding: 0 1rem;
+      display: none;
     }
 
     .option-container button {
@@ -94,11 +91,102 @@
       flex-direction: column;
       justify-content: flex-end;
       align-items: flex-end;
+      height: 100%;
+      width: 100%;
       padding: 2rem;
       box-sizing: border-box;
     }
 
     #start-button {
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #222;
+      border: 2px solid #ddd;
+      border-radius: 1.5rem;
+      padding: 0.8rem 1.6rem;
+      font-size: 0.9rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    #start-button:hover {
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    @media screen and (orientation: portrait) {
+      body::before {
+        content: "🔁 Please rotate your device to landscape.";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: black;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 2rem;
+        z-index: 9999;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      #game-container,
+      #start-screen {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Start Screen -->
+  <div id="start-screen">
+    <button id="start-button" onclick="showLevelSelect()">Start Game</button>
+  </div>
+
+  <!-- Game Container -->
+  <div id="game-container">
+    <div class="bubble" id="bubble-text">Which greenwashing sin would you like to explore?</div>
+    <div class="option-container" id="levels-container">
+      <button onclick="openLevel('level1.html')">1. Hidden Trade-Off</button>
+      <button onclick="openLevel('level2.html')">2. No Proof</button>
+      <button onclick="openLevel('level3.html')">3. Vague Buzzword</button>
+      <button onclick="openLevel('level4.html')">4. Fake Label</button>
+      <button onclick="openLevel('level5.html')">5. Irrelevant Claim</button>
+      <button onclick="openLevel('level6.html')">6. Lesser of Two Evils</button>
+      <button onclick="openLevel('level7.html')">7. Fibbing</button>
+    </div>
+  </div>
+
+  <script>
+    function showLevelSelect() {
+      const startScreen = document.getElementById('start-screen');
+      const gameContainer = document.getElementById('game-container');
+      const bubble = document.getElementById('bubble-text');
+      const levels = document.getElementById('levels-container');
+
+      // Fade out start screen
+      startScreen.classList.add('fade-out');
+
+      setTimeout(() => {
+        startScreen.style.display = 'none';
+        gameContainer.style.display = 'flex';
+        gameContainer.classList.add('fade-in');
+        bubble.style.display = 'block';
+        levels.style.display = 'flex';
+      }, 800);
+    }
+
+    function openLevel(filename) {
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+        window.location.href = filename;
+      }, 600);
+    }
+  </script>
+</body>
+</html>    #start-button {
       background-color: rgba(255, 255, 255, 0.8);
       color: #222;
       border: 2px solid #ddd;
